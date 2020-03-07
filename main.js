@@ -9,7 +9,7 @@
         "text-align": "center",
         padding: "1em"
     });
-    $("<div>").appendTo("body").text("キーボードの十字キーでこのキャラクターを操作できます。");
+    $("<div>").appendTo(h).text("キーボードの十字キーでこのキャラクターを操作できます。");
 
     var input_n = yaju1919.addInputNumber(h,{
         id: "input_n",
