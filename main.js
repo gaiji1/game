@@ -26,11 +26,14 @@
         }
     });
 
-    var input_m = yaju1919.addInputNumber(h,{
-        title: "モーション時間[ミリ秒]",
+    yaju1919.addInputNumber(h,{
+        title: "画面の拡大倍率",
         int: true,
-        value: 500,
-        min: 1,
+        value: 4,
+        min: 0,
+        change: function(n){
+            scope = n;
+        }
     });
 
     yaju1919.addInputNumber(h,{
@@ -43,14 +46,11 @@
         }
     });
 
-    yaju1919.addInputNumber(h,{
-        title: "画面の拡大倍率",
+    var input_m = yaju1919.addInputNumber(h,{
+        title: "モーション時間[ミリ秒]",
         int: true,
-        value: 2,
-        min: 0,
-        change: function(n){
-            scope = n;
-        }
+        value: 500,
+        min: 1,
     });
 
     var h_cv = $("<div>").appendTo(h);
