@@ -10,6 +10,7 @@
         "text-align": "center",
         padding: "1em"
     });
+    $("<div>").text("キーボードの十字キーでこのキャラクターを操作できます。");
 
     var input_n = yaju1919.addInputNumber(h,{
         id: "input_n",
@@ -90,6 +91,9 @@
             anime: anime, // モーションが切り替わるまでの時間
         });
         var img = new Image();
+        img.onerror = function(){
+            img.src = 'http://rpgen.us/dq/sAnims/img/404.png';
+        };
         img.src = p.url;
         function draw(ctx, param){
             var wh = yaju1919.init(param,{
