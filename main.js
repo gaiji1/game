@@ -153,7 +153,7 @@
     function render () {
         var cv = $("<canvas>").attr({
             width: $(window).width() * 0.9,
-            height: $(window).height() * 0.6
+            height: $(window).height() * 0.7
         });//.css("background-color","black");
         var ctx = cv.get(0).getContext('2d');
         // ドットを滑らかにしないおまじない
