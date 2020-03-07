@@ -3,7 +3,6 @@
     var start_flag = false;
     var player,
         spd = 2,
-        anime = 500,
         scope = 4; // 倍率
     // main
     var h = $("<div>").appendTo("body").css({
@@ -27,14 +26,11 @@
         }
     });
 
-    yaju1919.addInputNumber(h,{
+    var input_m = yaju1919.addInputNumber(h,{
         title: "モーション時間[ミリ秒]",
         int: true,
         value: 500,
         min: 1,
-        change: function(n){
-            anime = n;
-        }
     });
 
     yaju1919.addInputNumber(h,{
@@ -88,7 +84,7 @@
             direct: 's', // 向き asdw
             isHide: false,
             url: '',
-            anime: anime, // モーションが切り替わるまでの時間
+            anime: 500, // モーションが切り替わるまでの時間
         });
         var img = new Image();
         img.onerror = function(){
