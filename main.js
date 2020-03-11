@@ -195,78 +195,90 @@
     });
 
     // カーソルの現在位置
-    var cntrol_flag, touchDevice_flag, cursor_x, cursor_y;
+    var NotKeyboard_flag = true,
+        touchDevice_flag, cursor_x, cursor_y;
     // マウスデバイス
     function mouse(e){
         if(touchDevice_flag) return;
-        cntrol_flag = e.which === 1;
+        NotKeyboard_flag = e.which === 1;
         cursor_x = e.pageX - cv_x;
         cursor_y = e.pageY - cv_y;
     }
     $(document).mousedown(mouse).mousemove(mouse).mouseup(function(){
         if(touchDevice_flag) return;
-        cntrol_flag = false;
+        NotKeyboard_flag = false;
     });
     // タッチデバイス
     function touch(e){
         touchDevice_flag = true;
-        cntrol_flag = true;
+        NotKeyboard_flag = true;
         cursor_x = e.pageX - cv_x;
         cursor_y = e.pageY - cv_y;
     }
     $(document).on('touchstart',touch).on('touchmove',touch).on('touchend',function(){
-        cntrol_flag = false;
+        NotKeyboard_flag = false;
     });
+    var lastSubY;
     function player_move () {
         if(!player) return;
-        var x = 0, y = 0, diag = 0.7;
+        var x = 0, y = 0, rad;
         var w = keys.ArrowUp,
             s = keys.ArrowDown,
             a = keys.ArrowLeft,
             d = keys.ArrowRight;
-        if(cntrol_flag){
+        if(NotKeyboard_flag){
             var pXY = player.getXY();
             var pX = pXY[0] * scope + 8 * scope,
                 pY = pXY[1] * scope + 8 * scope;
             var subX = cursor_x - pX,
                 subY = cursor_y - pY;
+            var tolerance = scope * spd; // 許容誤差
+            if(Math.abs(subX) < tolerance) {
+                a = d = false;
+                subX = 0;
+            }
+            if(Math.abs(subY) < tolerance) {
+                w = s = false;
+                subY = 0;
+            }
+            if(!subX && !subY) return player.direct(lastSubY > 0 ? 's' : 'w'); // 動かない
+            lastSubY = subY;
             d = !(a = subX < 0);
             s = !(w = subY < 0);
-            if(Math.abs(subX) < 19) a = d = false;
-            if(Math.abs(subY) < 19) w = s = false;
+            rad = Math.atan2(subY, subX);
         }
-        if(w && a){
-            y = -spd * diag;
-            x = -spd * diag;
+        else {
+            var deg;
+            if(w && d) deg = -45;
+            else if(w && a) deg = -135;
+            else if(s && a) deg = 135;
+            else if(s && d) deg = 45;
+            else if(d) deg = 0;
+            else if(w) deg = -90;
+            else if(a) deg = 180;
+            else if(s) deg = 90;
+            rad = deg * (Math.PI / 180);
         }
-        else if(w && d){
-            y = -spd * diag;
-            x = spd * diag;
+        if(rad || rad === 0){
+            x = Math.floor(Math.cos(rad) * spd);
+            y = Math.floor(Math.sin(rad) * spd);
         }
-        else if(s && a){
-            y = spd * diag;
-            x = -spd * diag;
-        }
-        else if(s && d){
-            y = spd * diag;
-            x = spd * diag;
-        }
-        else if(w){
-            y = -spd;
-            player.direct('w');
-        }
-        else if(s){
-            y = spd;
-            player.direct('s');
-        }
-        else if(a){
-            x = -spd;
+
+        // 向きの設定-------------------------
+        if(a){
             player.direct('a');
         }
         else if(d){
-            x = spd;
             player.direct('d');
         }
+        else if(s){
+            player.direct('s');
+        }
+        else if(w){
+            player.direct('w');
+        }
+        //-------------------------------------
+
         player.move(x,y);
     }
 
