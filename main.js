@@ -218,8 +218,8 @@
                 subY = cursor_y - pY;
             d = !(a = subX < 0);
             s = !(w = subY < 0);
-            if(Math.abs(subX) < 5) a = d = false;
-            if(Math.abs(subY) < 5) w = s = false;
+            if(Math.abs(subX) < 19) a = d = false;
+            if(Math.abs(subY) < 19) w = s = false;
         }
         if(w && a){
             y = -spd * diag;
