@@ -9,6 +9,7 @@
         "text-align": "center",
         padding: "1em"
     });
+    $("<h1>").appendTo(holder).text("RPGENの素材を動かすテスト");
     $("<div>").appendTo(holder).text("キーボードの十字キー or 画面クリック で、");
     $("<div>").appendTo(holder).text("このキャラクターを操作できます。");
 
