@@ -9,16 +9,15 @@
         "text-align": "center",
         padding: "1em"
     });
-    $("<h1>").appendTo(holder).text("RPGENの素材を動かすテスト");
-    $("<div>").appendTo(holder).text("キーボードの十字キー or 画面クリック で、");
+    $("<div>").appendTo(holder).text("十字キー or 画面クリック で、");
     $("<div>").appendTo(holder).text("このキャラクターを操作できます。");
-    holder.append("<br><br>");
+    holder.append("<br>");
 
     var mylist = "1216 1204 1195 1194 1146 1143 1139 1138 1072 1058 1053 1050".split(' ');
 
     var input_n = yaju1919.addInputNumber(holder,{
         id: "input_n",
-        title: "スプライトアニメーションの番号",
+        title: "スプライトの番号",
         int: true,
         value: yaju1919.randArray(mylist),
         min: 1,
@@ -63,7 +62,7 @@
 
     function resetCanvas(){ // canvasの再設定
         cv_w = $(window).width() * 0.9;
-        cv_h = $(window).height() * 0.7;
+        cv_h = $(window).height() * 0.5;
         if(cv) cv.remove();
         cv = $("<canvas>").attr({ // ゲームの画面
             width: cv_w,
