@@ -5,13 +5,14 @@
         spd = 2,
         scope = 4; // 倍率
     // main
-    var h = $("<div>").appendTo("body").css({
+    var holder = $("<div>").appendTo("body").css({
         "text-align": "center",
         padding: "1em"
     });
-    $("<div>").appendTo(h).text("キーボードの十字キーでこのキャラクターを操作できます。");
+    $("<div>").appendTo(holder).text("キーボードの十字キー or 画面クリック で、");
+    $("<div>").appendTo(holder).text("このキャラクターを操作できます。");
 
-    var input_n = yaju1919.addInputNumber(h,{
+    var input_n = yaju1919.addInputNumber(holder,{
         id: "input_n",
         title: "スプライトアニメーションの番号",
         int: true,
@@ -26,7 +27,7 @@
         }
     });
 
-    yaju1919.addInputNumber(h,{
+    yaju1919.addInputNumber(holder,{
         title: "画面の拡大倍率",
         int: true,
         value: 4,
@@ -36,7 +37,7 @@
         }
     });
 
-    yaju1919.addInputNumber(h,{
+    yaju1919.addInputNumber(holder,{
         title: "移動速度[px]",
         int: true,
         value: 3,
@@ -46,14 +47,35 @@
         }
     });
 
-    var input_m = yaju1919.addInputNumber(h,{
+    var input_m = yaju1919.addInputNumber(holder,{
         title: "モーション時間[ミリ秒]",
         int: true,
         value: 500,
         min: 1,
     });
 
-    var h_cv = $("<div>").appendTo(h);
+    var holder_cv = $("<div>").appendTo(holder);
+    var cv, ctx, cv_w, cv_h, cv_x, cv_y;
+
+    function resetCanvas(){ // canvasの再設定
+        cv_w = $(window).width() * 0.9;
+        cv_h = $(window).height() * 0.7;
+        if(cv) cv.remove();
+        cv = $("<canvas>").attr({ // ゲームの画面
+            width: cv_w,
+            height: cv_h
+        }).appendTo(holder_cv);
+        cv_x = cv.offset().left;
+        cv_y = cv.offset().top;
+        ctx = cv.get(0).getContext('2d');
+        // ドットを滑らかにしないおまじない
+        ctx.mozImageSmoothingEnabled = false;
+        ctx.webkitImageSmoothingEnabled = false;
+        ctx.msImageSmoothingEnabled = false;
+        ctx.imageSmoothingEnabled = false;
+    }
+    $(window).resize(resetCanvas);
+    resetCanvas();
 
     // キャラクター十字移動
 
@@ -114,6 +136,9 @@
             var sx = (Math.floor(nowTime/p.anime) % 2 ) * 16;
             ctx.drawImage(img, sx, sy, 16, 16, p.x * scope, p.y * scope, wh.w * scope, wh.h * scope);
         }
+        function getXY(){ // 座標を取得
+            return [ p.x, p.y ];
+        }
         function jump(x,y){ // 絶対移動
             p.x = x;
             p.y = y;
@@ -125,10 +150,11 @@
         function hide(bool){ // 隠す
             p.isHide = bool;
         }
-        function direct(char){ // 隠す
+        function direct(char){ // 向きを変更 char: asdw
             p.direct = char;
         }
         var sprite = {
+            getXY: getXY,
             draw: draw,
             jump: jump,
             move: move,
@@ -151,30 +177,31 @@
     }
 
     function render () {
-        var cv = $("<canvas>").attr({
-            width: $(window).width() * 0.9,
-            height: $(window).height() * 0.7
-        });//.css("background-color","black");
-        var ctx = cv.get(0).getContext('2d');
-        // ドットを滑らかにしないおまじない
-        ctx.mozImageSmoothingEnabled = false;
-        ctx.webkitImageSmoothingEnabled = false;
-        ctx.msImageSmoothingEnabled = false;
-        ctx.imageSmoothingEnabled = false;
-        //
+        ctx.clearRect(0, 0, cv_w, cv_h);
         drawAll(ctx);
-        h_cv.empty().append(cv);
     }
 
     init();
 
     //-----------------------------------------------------
-    //複数のキー入力を同時検出
+    // 複数のキー入力を同時検出
     var keys = {};
     $(document).keydown(function(e){
         keys[e.key] = true;
+        if(e.key.indexOf("Arrow") !== -1) e.preventDefault();
     }).keyup(function(e){
         delete keys[e.key];
+    });
+
+    // カーソルの現在位置
+    var mouse_flag, cursor_x, cursor_y;
+    function mouse(e){
+        mouse_flag = e.which === 1;
+        cursor_x = e.pageX - cv_x;
+        cursor_y = e.pageY - cv_y;
+    }
+    $(document).mousedown(mouse).mousemove(mouse).mouseup(function(){
+        mouse_flag = false;
     });
     function player_move () {
         if(!player) return;
@@ -183,6 +210,17 @@
             s = keys.ArrowDown,
             a = keys.ArrowLeft,
             d = keys.ArrowRight;
+        if(mouse_flag){ // キーボード入力よりマウスによる移動を優先
+            var pXY = player.getXY();
+            var pX = pXY[0] * scope + 8 * scope,
+                pY = pXY[1] * scope + 8 * scope;
+            var subX = cursor_x - pX,
+                subY = cursor_y - pY;
+            d = !(a = subX < 0);
+            s = !(w = subY < 0);
+            if(Math.abs(subX) < 5) a = d = false;
+            if(Math.abs(subY) < 5) w = s = false;
+        }
         if(w && a){
             y = -spd * diag;
             x = -spd * diag;
