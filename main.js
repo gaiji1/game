@@ -269,9 +269,8 @@
             else if(deg2 > -45 && deg2 < 45) player.direct('d');
             else if(deg2 > 45 && deg2 < 135) player.direct('s');
             else if(deg2 > 135 || deg2 < -135) player.direct('a');
+            player.move(x,y);
         }
-
-        player.move(x,y);
     }
 
     start_flag = true;
