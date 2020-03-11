@@ -261,8 +261,8 @@
             rad = deg * (Math.PI / 180);
         }
         if(rad || rad === 0){
-            x = Math.floor(Math.cos(rad) * spd);
-            y = Math.floor(Math.sin(rad) * spd);
+            x = Math.cos(rad) * spd;
+            y = Math.sin(rad) * spd;
         }
 
         // 向きの設定-------------------------
