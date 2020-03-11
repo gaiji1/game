@@ -14,11 +14,13 @@
     $("<div>").appendTo(holder).text("このキャラクターを操作できます。");
     holder.append("<br><br>");
 
+    var mylist = "1216 1204 1195 1194 1146 1143 1139 1138 1072 1058 1053 1050".split(' ');
+
     var input_n = yaju1919.addInputNumber(holder,{
         id: "input_n",
         title: "スプライトアニメーションの番号",
         int: true,
-        value: 1194,
+        value: yaju1919.randArray(mylist),
         min: 1,
         change: function(n){
             if(!start_flag) return;
@@ -220,7 +222,6 @@
     $(document).on('touchstart',touch).on('touchmove',touch).on('touchend',function(){
         NotKeyboard_flag = false;
     });
-    var lastSubY;
     function player_move () {
         if(!player) return;
         var x = 0, y = 0, rad;
@@ -243,8 +244,7 @@
                 w = s = false;
                 subY = 0;
             }
-            if(!subX && !subY) return player.direct(lastSubY > 0 ? 's' : 'w'); // 動かない
-            lastSubY = subY;
+            if(!subX && !subY) return; // 動かない
             d = !(a = subX < 0);
             s = !(w = subY < 0);
             rad = Math.atan2(subY, subX);
@@ -264,22 +264,13 @@
         if(rad || rad === 0){
             x = Math.cos(rad) * spd;
             y = Math.sin(rad) * spd;
+            // 向きの設定
+            var deg2 = (rad * 180) / Math.PI;
+            if(deg2 > -135 && deg2 < -45) player.direct('w');
+            else if(deg2 > -45 && deg2 < 45) player.direct('d');
+            else if(deg2 > 45 && deg2 < 135) player.direct('s');
+            else if(deg2 > 135 || deg2 < -135) player.direct('a');
         }
-
-        // 向きの設定-------------------------
-        if(a){
-            player.direct('a');
-        }
-        else if(d){
-            player.direct('d');
-        }
-        else if(s){
-            player.direct('s');
-        }
-        else if(w){
-            player.direct('w');
-        }
-        //-------------------------------------
 
         player.move(x,y);
     }
