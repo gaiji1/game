@@ -12,6 +12,7 @@
     $("<h1>").appendTo(holder).text("RPGENの素材を動かすテスト");
     $("<div>").appendTo(holder).text("キーボードの十字キー or 画面クリック で、");
     $("<div>").appendTo(holder).text("このキャラクターを操作できます。");
+    holder.append("<br><br>");
 
     var input_n = yaju1919.addInputNumber(holder,{
         id: "input_n",
