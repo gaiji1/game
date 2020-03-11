@@ -210,7 +210,7 @@
     // タッチデバイス
     function touch(e){
         touchDevice_flag = true;
-        cntrol_flag = e.which === 1;
+        cntrol_flag = true;
         cursor_x = e.pageX - cv_x;
         cursor_y = e.pageY - cv_y;
     }
