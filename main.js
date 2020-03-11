@@ -213,8 +213,9 @@
     function touch(e){
         touchDevice_flag = true;
         NotKeyboard_flag = true;
-        cursor_x = e.pageX - cv_x;
-        cursor_y = e.pageY - cv_y;
+        var touchObject = e.changedTouches[0]
+        cursor_x = touchObject.pageX - cv_x;
+        cursor_y = touchObject.pageY - cv_y;
     }
     $(document).on('touchstart',touch).on('touchmove',touch).on('touchend',function(){
         NotKeyboard_flag = false;
