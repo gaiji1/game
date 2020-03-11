@@ -215,9 +215,9 @@
     function touch(e){
         touchDevice_flag = true;
         NotKeyboard_flag = true;
-        var touchObject = e.changedTouches[0]
-        cursor_x = touchObject.pageX - cv_x;
-        cursor_y = touchObject.pageY - cv_y;
+        var xy = e.originalEvent.changedTouches[0];
+        cursor_x = xy.pageX - cv_x;
+        cursor_y = xy.pageY - cv_y;
     }
     $(document).on('touchstart',touch).on('touchmove',touch).on('touchend',function(){
         NotKeyboard_flag = false;
