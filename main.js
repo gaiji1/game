@@ -195,14 +195,27 @@
     });
 
     // カーソルの現在位置
-    var mouse_flag, cursor_x, cursor_y;
+    var cntrol_flag, touchDevice_flag, cursor_x, cursor_y;
+    // マウスデバイス
     function mouse(e){
-        mouse_flag = e.which === 1;
+        if(touchDevice_flag) return;
+        cntrol_flag = e.which === 1;
         cursor_x = e.pageX - cv_x;
         cursor_y = e.pageY - cv_y;
     }
     $(document).mousedown(mouse).mousemove(mouse).mouseup(function(){
-        mouse_flag = false;
+        if(touchDevice_flag) return;
+        cntrol_flag = false;
+    });
+    // タッチデバイス
+    function touch(e){
+        touchDevice_flag = true;
+        cntrol_flag = e.which === 1;
+        cursor_x = e.pageX - cv_x;
+        cursor_y = e.pageY - cv_y;
+    }
+    $(document).on('touchstart',touch).on('touchmove',touch).on('touchend',function(){
+        cntrol_flag = false;
     });
     function player_move () {
         if(!player) return;
@@ -211,7 +224,7 @@
             s = keys.ArrowDown,
             a = keys.ArrowLeft,
             d = keys.ArrowRight;
-        if(mouse_flag){ // キーボード入力よりマウスによる移動を優先
+        if(cntrol_flag){
             var pXY = player.getXY();
             var pX = pXY[0] * scope + 8 * scope,
                 pY = pXY[1] * scope + 8 * scope;
