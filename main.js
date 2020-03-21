@@ -13,7 +13,7 @@
     $("<div>").appendTo(holder).text("このキャラクターを操作できます。");
     holder.append("<br>");
 
-    var mylist = "1216 1204 1195 1194 1146 1143 1139 1138 1072 1058 1053 1050".split(' ');
+    var mylist = "1138 1139 1143 1194 1212 1216 1232 1248 1250 1256".split(' ');
 
     var input_n = yaju1919.addInputNumber(holder,{
         id: "input_n",
