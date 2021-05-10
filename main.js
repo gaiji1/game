@@ -177,6 +177,7 @@ $("body").empty();
     $(document).on('touchstart',touch).on('touchmove',touch).on('touchend',function(){
         NotKeyboard_flag = false;
     });
+    let disabled = false;
     function player_move () {
         if(!player) return;
         var x = 0, y = 0, rad;
@@ -184,7 +185,11 @@ $("body").empty();
             s = keys.ArrowDown,
             a = keys.ArrowLeft,
             d = keys.ArrowRight;
-        if(keys.f) spd = spd < 5 ? spd + 1 : 2;
+        if(keys.f && !disabled) {
+            spd = spd < 10 ? spd + 3 : 2;
+            disabled = true;
+        }
+        if(!keys.f && disabled) disabled = false;
         if(NotKeyboard_flag){
             var pXY = player.getXY();
             var pX = pXY[0] * scope + 8 * scope,
