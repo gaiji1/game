@@ -1,9 +1,9 @@
-(function(){
+$("body").empty();
+(async function(){
     "use strict";
-    var start_flag = false;
     var player,
         spd = 2,
-        scope = 4; // 倍率
+        scope = 3; // 倍率
     // main
     var holder = $("<div>").appendTo("body").css({
         "text-align": "center",
@@ -13,56 +13,12 @@
     $("<div>").appendTo(holder).text("このキャラクターを操作できます。");
     holder.append("<br>");
 
-    var mylist = "1138 1139 1143 1194 1212 1216 1232 1248 1250 1256".split(' ');
-
-    var input_n = yaju1919.addInputNumber(holder,{
-        id: "input_n",
-        title: "スプライトの番号",
-        int: true,
-        value: yaju1919.randArray(mylist),
-        min: 1,
-        change: function(n){
-            if(!start_flag) return;
-            player = makeAnime({
-                url: "http://rpgen.pw/dq/sAnims/res/" + n + ".png",
-                anime: input_m()
-            });
-        }
-    });
-
-    yaju1919.addInputNumber(holder,{
-        title: "画面の拡大倍率",
-        int: true,
-        value: 4,
-        min: 0,
-        change: function(n){
-            scope = n;
-        }
-    });
-
-    yaju1919.addInputNumber(holder,{
-        title: "移動速度[px]",
-        int: true,
-        value: 3,
-        min: 0,
-        change: function(n){
-            spd = n;
-        }
-    });
-
-    var input_m = yaju1919.addInputNumber(holder,{
-        title: "モーション時間[ミリ秒]",
-        int: true,
-        value: 500,
-        min: 1,
-    });
-
     var holder_cv = $("<div>").appendTo(holder);
     var cv, ctx, cv_w, cv_h, cv_x, cv_y;
 
     function resetCanvas(){ // canvasの再設定
         cv_w = $(window).width() * 0.9;
-        cv_h = $(window).height() * 0.5;
+        cv_h = $(window).height() * 0.8;
         if(cv) cv.remove();
         cv = $("<canvas>").attr({ // ゲームの画面
             width: cv_w,
@@ -87,6 +43,7 @@
     var nowTime;
     function drawAll (ctx) { // 全てを描画
         nowTime = new Date();
+        bgImg.draw();
         Object.keys(list_z).map(function(v){
             return Number(v);
         }).filter(function(v){
@@ -137,6 +94,7 @@
                     break;
             }
             var sx = (Math.floor(nowTime/p.anime) % 2 ) * 16;
+            const half = 8 * scope;
             ctx.drawImage(img, sx, sy, 16, 16, p.x * scope, p.y * scope, wh.w * scope, wh.h * scope);
         }
         function getXY(){ // 座標を取得
@@ -183,8 +141,6 @@
         ctx.clearRect(0, 0, cv_w, cv_h);
         drawAll(ctx);
     }
-
-    init();
 
     //-----------------------------------------------------
     // 複数のキー入力を同時検出
@@ -269,10 +225,36 @@
             else if(deg2 > -45 && deg2 < 45) player.direct('d');
             else if(deg2 > 45 && deg2 < 135) player.direct('s');
             else if(deg2 > 135 || deg2 < -135) player.direct('a');
-            player.move(x,y);
+            bgImg.move(-x,-y);
         }
     }
-
-    start_flag = true;
-    $("#input_n").trigger("change");
+    player = makeAnime({
+        x: cv_w/scope/2 - 8,
+        y: cv_h/scope/2 - 8,
+        url: "http://rpgen.pw/dq/sAnims/res/" + 999 + ".png",
+        anime: 500
+    });
+    const bgImg = await (()=>{
+        let img = new Image();
+        let px, py;
+        function draw(){
+            ctx.drawImage(img, px, py);
+        }
+        function jump(x,y){ // 絶対移動
+            px = x;
+            py = y;
+        }
+        function move(x,y){ // 相対移動
+            px += x;
+            py += y;
+        }
+        return new Promise(resolve=>{
+            img.onload = () => {
+                jump(-img.width/2+100,-img.height/2+750);
+                resolve({ draw,jump,move });
+            };
+            img.src = "https://i.imgur.com/zVWMeGm.png";
+        })
+    })();
+    init();
 })();
