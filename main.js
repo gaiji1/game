@@ -184,6 +184,7 @@ $("body").empty();
             s = keys.ArrowDown,
             a = keys.ArrowLeft,
             d = keys.ArrowRight;
+        if(keys.f) spd = spd < 5 ? spd + 1 : 2;
         if(NotKeyboard_flag){
             var pXY = player.getXY();
             var pX = pXY[0] * scope + 8 * scope,
